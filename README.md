@@ -91,7 +91,7 @@ sudo pip install fake-factory
 sudo pip install http://github.com/guedes/faker_fdw/archive/master.zip
 ```
 
-Once installed, choose which database you want it installed and then:
+Once packages was installed, choose which database you want `faker_fdw` by typing:
 
 ```sql
 CREATE EXTENSION multicorn;
