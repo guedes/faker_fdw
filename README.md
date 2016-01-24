@@ -2,7 +2,7 @@
 
 `faker_fdw` is a foreign data wrapper for PostgreSQL that generates fake data. 
 
-## What I can do with it?
+## What can I do with it?
 
 You can generate data for testing, create examples for your blog, populate a development database and other things related to generate fake data. 
 
