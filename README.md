@@ -2,6 +2,19 @@
 
 `faker_fdw` is a foreign data wrapper for PostgreSQL that generates fake data. 
 
+## What I can do with it?
+
+You can generate data for testing, create examples for your blog, populate a development database and other things related to generate fake data. 
+
+When `faker_fdw` is installed, create one milion rows on a `people` table is as easy as doing:
+
+```sql
+devdb=> INSERT INTO public.people SELECT ssn, name, phone_number FROM faker.people;
+```
+
+In the snippet above, `faker.people` is a foreign table that returns some "person" fields, but you can do much more,
+like geolocation, addresses, credit card and so on.
+
 ## How it works?
 
 It's easy, once `faker_fdw` was installed ([see below how to install](#installing) and create the `faker_srv`), just create 
@@ -80,7 +93,7 @@ Time: 19,201 ms
 
 ## Installing
 
-You must install few dependencies related to PostgreSQL and 
+You must install a few dependencies related to PostgreSQL and 
 Python: `multicorn`, `fake-factory` then `fake_fdw`.
 
 In Debian this is as easy as:
