@@ -91,6 +91,49 @@ guedes=> SELECT * FROM fake.person LIMIT 10;
 Time: 19,201 ms
 ```
 
+The data are random generated, so each execution even in diferent sessions will generate a new random dataset, but, sometimes, this is not what you want, because your tests must re-run using the same set of data. You can persist data in other tables, rather than select direct from faker tables, or you can set a `seed` option and use the same seed in *different sessions* to get the same set of data, like the following example:
+
+```sql
+guedes=> alter foreign table fake.person options ( add seed '1234' );
+ALTER FOREIGN TABLE
+guedes=> \c - postgres
+You are now connected to database "guedes" as user "postgres".
+guedes=# select * from fake.person limit 5;
+     ssn     |         name          |             address             |     phone_number     
+-------------+-----------------------+---------------------------------+----------------------
+ 165-12-0147 | Dr. Aron Lind IV      | 2564 Julius View               +| 409.956.0720x73661
+             |                       | South Amon, MO 14305            | 
+ 160-16-9547 | Rowan Bauch           | 8474 Thompson Lights           +| 05197913028
+             |                       | Schultzburgh, CT 41584          | 
+ 356-05-2862 | Jaydon Bogisich       | 90204 Sim River Suite 583      +| 663.781.9218x7740
+             |                       | Langworthchester, FM 38547-5316 | 
+ 864-54-9210 | Maximillian Stamm PhD | 8213 Julie Path                +| 1-803-066-7124x72838
+             |                       | Port Whitmouth, DC 03464        | 
+ 721-72-6607 | Foster Schimmel       | USS Ullrich                    +| (423)625-9466
+             |                       | FPO AA 79263-9218               | 
+(5 rows)
+
+Time: 123.969 ms
+guedes=# \c - guedes
+You are now connected to database "guedes" as user "guedes".
+guedes=> select * from fake.person limit 5;
+     ssn     |         name          |             address             |     phone_number     
+-------------+-----------------------+---------------------------------+----------------------
+ 165-12-0147 | Dr. Aron Lind IV      | 2564 Julius View               +| 409.956.0720x73661
+             |                       | South Amon, MO 14305            | 
+ 160-16-9547 | Rowan Bauch           | 8474 Thompson Lights           +| 05197913028
+             |                       | Schultzburgh, CT 41584          | 
+ 356-05-2862 | Jaydon Bogisich       | 90204 Sim River Suite 583      +| 663.781.9218x7740
+             |                       | Langworthchester, FM 38547-5316 | 
+ 864-54-9210 | Maximillian Stamm PhD | 8213 Julie Path                +| 1-803-066-7124x72838
+             |                       | Port Whitmouth, DC 03464        | 
+ 721-72-6607 | Foster Schimmel       | USS Ullrich                    +| (423)625-9466
+             |                       | FPO AA 79263-9218               | 
+(5 rows)
+
+Time: 115.262 ms
+```
+
 ## Installing
 
 You must install a few dependencies related to PostgreSQL and 
