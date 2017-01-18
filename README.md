@@ -143,8 +143,8 @@ In Debian this is as easy as:
 
 ```bash
 sudo apt-get install postgresql-9.5-python-multicorn
-sudo pip install fake-factory
-sudo pip install http://github.com/guedes/faker_fdw/archive/v0.1.1.zip
+sudo pip install Faker
+sudo pip install http://github.com/guedes/faker_fdw/archive/v0.1.2.zip
 ```
 
 Once packages was installed, choose which database you want `faker_fdw` by typing:
