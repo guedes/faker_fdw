@@ -156,6 +156,17 @@ CREATE SERVER faker_srv
  OPTIONS (wrapper 'faker_fdw.FakerForeignDataWrapper');
 ```
 
+`faker_fdw` supports `IMPORT SCHEMA` that is used to create example tables for many
+providers. For some limitations all fields are created as `varchar` but you can use
+`ALTER TABLE` to change field type. Example:
+
+```sql
+IMPORT FOREIGN SCHEMA fake
+FROM SERVER faker_srv
+INTO fake
+OPTIONS ( locale 'pt_BR', max_results '100');
+```
+
 And that's it! Have fun!
 
 ## TODO
