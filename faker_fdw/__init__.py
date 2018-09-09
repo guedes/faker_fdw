@@ -65,3 +65,46 @@ class FakerForeignDataWrapper(ForeignDataWrapper):
                 line[column] = self.columns[column]()
 
             yield line
+
+    def get_rel_size(self, quals, columns):
+        return (self.limit, len(columns) * 42)
+
+    @classmethod
+    def import_schema(self, schema, srv_options, options,
+                      restriction_type, restricts):
+
+        tables = []
+
+        for provider in Faker().providers:
+            columns = []
+
+            log_to_postgres("provider: {}".format(provider), DEBUG)
+
+            schema_name, provider_name = self._destructure_class_name(provider)
+            for field in filter(lambda x: not x.startswith('_'), dir(provider)):
+                log_to_postgres("{} {} > {}".format(schema, provider_name, field), DEBUG)
+
+                if field.startswith('random') or field.endswith('ify') or field == 'generator':
+                    continue
+
+                columns.append(ColumnDefinition(
+                    column_name=field,
+                    type_name="varchar"))
+
+            tables.append(TableDefinition(
+                table_name=provider_name,
+                schema=schema,
+                columns=columns,
+                options=options))
+
+        return tables
+
+    @classmethod
+    def _destructure_class_name(self, cn):
+        log_to_postgres('cn '+cn.__module__, DEBUG)
+        try:
+            schema, _, provider, _ = cn.__module__.split('.', maxsplit=3)
+        except ValueError:
+            schema, _, provider = cn.__module__.split('.', maxsplit=3)
+
+        return schema, provider
