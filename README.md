@@ -134,6 +134,66 @@ guedes=> select * from fake.person limit 5;
 Time: 115.262 ms
 ```
 
+Some fields accepts options and they are passed to the respective provider. Let's supose that you
+want some kind of "date and time on this year" for your `person` table, so you can add a field 
+`date_time_this_year` like below:
+
+
+```
+guedes=# alter foreign table fake.person add column date_time_this_year timestamp;
+ALTER FOREIGN TABLE
+guedes=# select date_time_this_year as d from fake.person limit 5;
+          d          
+---------------------
+ 2018-07-28 02:14:46
+ 2018-07-08 00:22:27
+ 2018-12-01 09:35:49
+ 2018-12-31 06:18:34
+ 2018-02-19 16:22:58
+(5 registros)
+```
+
+That's fine, but what if you want only datetimes **after now**? The [date time provider](https://faker.readthedocs.io/en/latest/providers/faker.providers.date_time.html)
+supports parameters like `before_now` and `after_now`, so let's use them:
+
+```
+guedes=# alter foreign table fake.person alter column date_time_this_year options (after_now 'True');
+ALTER FOREIGN TABLE
+
+guedes=# select date_time_this_year ad d from fake.person where date_time_this_year > now();
+          d          
+---------------------
+ 2018-09-19 21:37:21
+ 2018-10-10 18:19:15
+ 2018-12-21 10:39:42
+ 2018-10-16 14:04:07
+ 2018-12-04 19:20:27
+ 2018-12-28 13:18:59
+ 2018-09-30 11:45:49
+ 2018-11-13 21:58:59
+ 2018-10-11 05:49:17
+ 2018-10-23 20:47:17
+ 
+ guedes=# alter foreign table fake.person alter column date_time_this_year options (before_now 'False');
+ALTER FOREIGN TABLE
+
+guedes=# select date_time_this_year as d from fake.person limit 5;
+          d          
+---------------------
+ 2018-12-26 01:16:32
+ 2018-11-22 05:59:49
+ 2018-12-14 23:18:47
+ 2018-11-10 10:08:14
+ 2018-09-17 21:38:14
+(5 registros)
+
+guedes=# select date_time_this_year as d from fake.person where date_time_this_year<now();
+ d 
+---
+(0 registro)
+
+```
+
 ## Installing
 
 You must install a few dependencies related to PostgreSQL and 
@@ -142,9 +202,9 @@ Python: `multicorn`, `fake-factory` then `fake_fdw`.
 In Debian this is as easy as:
 
 ```bash
-sudo apt-get install postgresql-9.5-python-multicorn
+sudo apt-get install postgresql-XX-python-multicorn
 sudo pip install Faker
-sudo pip install http://github.com/guedes/faker_fdw/archive/v0.1.2.zip
+sudo pip install http://github.com/guedes/faker_fdw/archive/v0.2.0.zip
 ```
 
 Once packages was installed, choose which database you want `faker_fdw` by typing:
@@ -158,7 +218,10 @@ CREATE SERVER faker_srv
 
 `faker_fdw` supports `IMPORT SCHEMA` that is used to create example tables for many
 providers. For some limitations all fields are created as `varchar` but you can use
-`ALTER TABLE` to change field type. Example:
+`ALTER TABLE` to change field type and there is no semantic between fields in the
+same record, that's it, each columns area independently generated. 
+
+To import am example schema:
 
 ```sql
 IMPORT FOREIGN SCHEMA fake
@@ -171,11 +234,10 @@ And that's it! Have fun!
 
 ## TODO
 
-1. support passing parameters to provider methods like `fake.credit_card_expire(start="now", end="+10y", date_format="%m/%y")` in [credit card provider](http://faker.readthedocs.org/en/latest/providers/faker.providers.credit_card.html#faker-providers-credit-card)
-2. extend examples and documentation;
-3. create an entire fake schema that return data with integrity between tables, as fake constraints;
-4. create a faker_fdw in C;
-5. ...
+1. extend examples and documentation;
+2. create an entire fake schema that return data with integrity between tables, as fake constraints;
+3. create a faker_fdw in C or Rust just for fun;
+4. ...
 
 # License
 
