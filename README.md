@@ -228,6 +228,32 @@ IMPORT FOREIGN SCHEMA fake
 FROM SERVER faker_srv
 INTO fake
 OPTIONS ( locale 'pt_BR', max_results '100');
+
+uedes=# \det fake.
+     Lista de tabelas externas
+ Esquema |    Tabela    | Servidor  
+---------+--------------+-----------
+ fake    | address      | faker_srv
+ fake    | automotive   | faker_srv
+ fake    | bank         | faker_srv
+ fake    | barcode      | faker_srv
+ fake    | color        | faker_srv
+ fake    | company      | faker_srv
+ fake    | credit_card  | faker_srv
+ fake    | currency     | faker_srv
+ fake    | date_time    | faker_srv
+ fake    | file         | faker_srv
+ fake    | internet     | faker_srv
+ fake    | isbn         | faker_srv
+ fake    | job          | faker_srv
+ fake    | lorem        | faker_srv
+ fake    | misc         | faker_srv
+ fake    | person       | faker_srv
+ fake    | phone_number | faker_srv
+ fake    | profile      | faker_srv
+ fake    | python       | faker_srv
+ fake    | ssn          | faker_srv
+ fake    | user_agent   | faker_srv
 ```
 
 And that's it! Have fun!
