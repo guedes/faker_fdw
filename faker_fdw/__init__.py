@@ -23,6 +23,7 @@
 from multicorn import ForeignDataWrapper, TableDefinition, ColumnDefinition
 from multicorn.utils import log_to_postgres, DEBUG
 from faker import Faker
+from functools import lru_cache
 
 
 class FakerForeignDataWrapper(ForeignDataWrapper):
@@ -51,9 +52,11 @@ class FakerForeignDataWrapper(ForeignDataWrapper):
         faker = Faker(self.locale)
         faker.seed(self.seed)
 
-        for column in columns:
+        for column, definition in columns.items():
+            log_to_postgres('column {} def {}'.format(column, type(definition.options)), DEBUG)
             func = getattr(faker, column, lambda: None)
-            self.columns[column] = func
+
+            self.columns[column] = {'function': func, 'args': definition.options}
 
     def execute(self, quals, columns):
         log_to_postgres("call execute()", DEBUG)
@@ -62,11 +65,16 @@ class FakerForeignDataWrapper(ForeignDataWrapper):
             line = {}
 
             for column in columns:
-                line[column] = self.columns[column]()
+                func = self.columns[column]['function']
+                args = self.columns[column]['args']
+                args = {k: self._try_convert(v) for k, v in args.items()}
+
+                line[column] = func(**args)
 
             yield line
 
     def get_rel_size(self, quals, columns):
+        # very very very magic number
         return (self.limit, len(columns) * 42)
 
     @classmethod
@@ -78,11 +86,8 @@ class FakerForeignDataWrapper(ForeignDataWrapper):
         for provider in Faker().providers:
             columns = []
 
-            log_to_postgres("provider: {}".format(provider), DEBUG)
-
             schema_name, provider_name = self._destructure_class_name(provider)
             for field in filter(lambda x: not x.startswith('_'), dir(provider)):
-                log_to_postgres("{} {} > {}".format(schema, provider_name, field), DEBUG)
 
                 if field.startswith('random') or field.endswith('ify') or field == 'generator':
                     continue
@@ -101,10 +106,52 @@ class FakerForeignDataWrapper(ForeignDataWrapper):
 
     @classmethod
     def _destructure_class_name(self, cn):
-        log_to_postgres('cn '+cn.__module__, DEBUG)
         try:
             schema, _, provider, _ = cn.__module__.split('.', maxsplit=3)
         except ValueError:
             schema, _, provider = cn.__module__.split('.', maxsplit=3)
 
         return schema, provider
+
+    @classmethod
+    @lru_cache(maxsize=32)
+    def _try_convert_to_int(self, value):
+        try:
+            value = int(value)
+        except ValueError:
+            value = None
+
+        return value
+
+    @classmethod
+    @lru_cache(maxsize=32)
+    def _try_convert_to_float(self, value):
+        try:
+            value = float(value)
+        except ValueError:
+            value = None
+
+        return value
+
+    @classmethod
+    @lru_cache(maxsize=3)
+    def _try_convert_to_bool(self, value):
+        if value in ['True', 'true', 't']:
+            return True
+        elif value in ['False', 'false', 'f']:
+            return False
+        else:
+            return None
+
+    @classmethod
+    @lru_cache(maxsize=32)
+    def _try_convert(self, value):
+
+        if self._try_convert_to_int(value):
+            value = self._try_convert_to_int(value)
+        elif self._try_convert_to_float(value):
+            value = self._try_convert_to_float(value)
+        elif self._try_convert_to_bool(value) is not None:
+            value = self._try_convert_to_bool(value)
+
+        return value
