@@ -160,7 +160,7 @@ supports parameters like `before_now` and `after_now`, so let's use them:
 guedes=# alter foreign table fake.person alter column date_time_this_year options (after_now 'True');
 ALTER FOREIGN TABLE
 
-guedes=# select date_time_this_year ad d from fake.person where date_time_this_year > now();
+guedes=# select date_time_this_year as d from fake.person where date_time_this_year > now();
           d          
 ---------------------
  2018-09-19 21:37:21
@@ -221,7 +221,7 @@ providers. For some limitations all fields are created as `varchar` but you can 
 `ALTER TABLE` to change field type and there is no semantic between fields in the
 same record, that's it, each columns area independently generated. 
 
-To import am example schema:
+To import an example schema:
 
 ```sql
 IMPORT FOREIGN SCHEMA fake
