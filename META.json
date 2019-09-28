@@ -2,26 +2,26 @@
    "name": "faker_fdw",
    "abstract": "Foreign data wrapper for random data generator",
    "description": "PostgreSQL extension which allows creation of table that generates random data based on its columns names.",
-   "version": "0.1.2",
+   "version": "0.2.2",
    "maintainer": "Dickson S. Guedes <guedes@guedesoft.net>",
    "license": "postgresql",
    "provides": {
       "faker_fdw": {
 	 "abstract": "Foreign data wrapper for random data generator",
          "docfile": "README.md",
-         "version": "0.1.2"
+         "version": "0.2.2"
       }
    },
    "prereqs": {
       "runtime": {
          "requires": {
-            "PostgreSQL": "9.5.0"
+            "PostgreSQL": ["9.5", "9.6", "10", "11"]
          }
       }
    },
    "resources": {
       "bugtracker": {
-         "web": "http://github.com/guedes/faker_fdw/issues/"
+         "web": "https://github.com/guedes/faker_fdw/issues/"
       },
       "repository": {
         "url":  "git://github.com/guedes/faker_fdw.git",
