@@ -204,7 +204,7 @@ In Debian this is as easy as:
 ```bash
 sudo apt-get install postgresql-XX-python-multicorn
 sudo pip install Faker
-sudo pip install http://github.com/guedes/faker_fdw/archive/v0.2.1.zip
+sudo pip install https://github.com/guedes/faker_fdw/archive/v0.2.1.zip
 ```
 
 Once packages was installed, choose which database you want `faker_fdw` by typing:
