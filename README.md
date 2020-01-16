@@ -206,6 +206,13 @@ sudo apt-get install postgresql-XX-python-multicorn
 sudo pip install Faker
 sudo pip install https://github.com/guedes/faker_fdw/archive/v0.2.3.zip
 ```
+If you are using the postgres docker image https://hub.docker.com/_/postgres
+
+```bash
+sudo apt-get install postgresql-XX-python3-multicorn
+sudo pip3 install Faker
+sudo pip3 install https://github.com/guedes/faker_fdw/archive/v0.2.3.zip
+```
 
 Once packages was installed, choose which database you want `faker_fdw` by typing:
 
