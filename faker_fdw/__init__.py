@@ -50,7 +50,7 @@ class FakerForeignDataWrapper(ForeignDataWrapper):
             self.seed = None
 
         faker = Faker(self.locale)
-        faker.seed(self.seed)
+        Faker.seed(self.seed)
 
         for column, definition in columns.items():
             log_to_postgres('column {} def {}'.format(column, type(definition.options)), DEBUG)
